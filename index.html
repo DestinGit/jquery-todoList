@@ -7,12 +7,22 @@
 
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <div class="row">
         <header class="col-md-6 col-md-offset-3">
             <h1>ToDo List</h1>
+            <span id="chevronUp-model" class="glyphicon glyphicon-chevron-up hide" aria-hidden="true"
+                  data-direction="1"></span>
+            <span id="chevronDown-model" class="glyphicon glyphicon-chevron-down hide" aria-hidden="true"
+                  data-direction="0"></span>
+
         </header>
         <div class="col-md-6 col-md-offset-3">
             <form class="form-inline" id="taskForm">
@@ -30,6 +40,7 @@
                 <thead>
                 <th>Taches</th>
                 <th>Status</th>
+                <th>Action</th>
                 </thead>
                 <tbody id="tasksList">
                 </tbody>
@@ -47,7 +58,7 @@
      *
      */
     function addItemOnTable(tbody, taskValue, keyItem, status) {
-        if(typeof status === 'undefined') {
+        if (typeof status === 'undefined') {
             status = 0;
         }
 // insérer une tache dans le tableau
@@ -68,6 +79,11 @@
 
         $('<td>').append($checkbox).appendTo($tr);
 
+        var $up = $('#chevronUp-model').clone().removeAttr('id').removeClass('hide');
+        var $down = $('#chevronDown-model').clone().removeAttr('id').removeClass('hide');
+
+        $('<td>').append($up).append($down).appendTo($tr);
+
         $tr.appendTo(tbody);
     }
 
@@ -77,14 +93,17 @@
     function addTaskOnTable(taskValue) {
         // insérer une tache dans localStorage
         var taskObj = {
-            task:taskValue,
-            status:0
+            task: taskValue,
+            status: 0
         };
         var keyItem = localStorage.length;
+        taskObj['order'] = keyItem;
+
         localStorage.setItem(keyItem, JSON.stringify(taskObj));
 
+        // insertion dans le tableau
         var $tbody = $("#tasksList");
-        addItemOnTable($tbody,taskValue, keyItem, taskObj['status']);
+        addItemOnTable($tbody, taskValue, keyItem, taskObj['status']);
     }
 
     /**
@@ -94,39 +113,67 @@
         var keyItem = localStorage.length;
 
         $tbody = $("#tasksList").clone();
-
-        for(var i = 0; i < keyItem; i++) {
+//        for (var i = 0; i < keyItem; i++){
+        for (var i = keyItem-1; i >= 0; i--) {
             var taskObj = JSON.parse(localStorage.getItem(i));
-            addItemOnTable($tbody,taskObj['task'], i, taskObj['status']);
+            addItemOnTable($tbody, taskObj['task'], i, taskObj['status']);
         }
 
         $("#tasksList").replaceWith($tbody);
     }
 
-    function setItemStatus() {
-        
+    /**
+     *
+     */
+    function updateItem() {
+        var keyItem = $(this).data('item');
+
+        var $tr = $(this).closest('tr');
+        var taskValue = $tr.find('label').text();
+
+        var taskObj = {
+            task: taskValue
+        };
+        taskObj['status'] = $(this).is(':checked') ? 1 : 0;
+
+        taskObj['order'] = keyItem;
+
+        localStorage.setItem(keyItem, JSON.stringify(taskObj));
     }
+
+    function sortItemOnTable(direction, $tr, $obj) {
+//        if (direction === 1) {
+//            $tr.insertBefore($prev);
+//        } else {
+//            $next.insertBefore($tr);
+//        }
+    }
+
+
     $(document).ready(function () {
         loadTasksOnTable();
 
-        $('#tasksList').delegate('.checkbox', 'click', function(){
-            var keyItem = $(this).data('item');
-
-            var $tr = $(this).closest('tr');
-            var taskValue = $tr.find('label').text();
-
-            var taskObj = {
-                task:taskValue
-            };
-            taskObj['status'] = $(this).is(':checked') ? 1 : 0;
-
-            localStorage.setItem(keyItem, JSON.stringify(taskObj));
-//            setItemStatus();
+        $('#tasksList').delegate('.checkbox', 'click', function () {
+            updateItem.call(this);
         });
+
+        $('#tasksList').delegate('.glyphicon', 'click', function () {
+            var direction = $(this).data('direction');
+            var $tr = $(this).closest('tr');
+            var $prev = $tr.prev();
+            var $next = $tr.next();
+
+            if (direction === 1) {
+                $tr.insertBefore($prev);
+            } else {
+                $tr.insertAfter($next);
+            }
+        });
+
         $('#taskForm').submit(function (e) {
             e.preventDefault();
             var taskValue = $('#input-tasks-id').val();
-            if (taskValue.length){
+            if (taskValue.length) {
                 addTaskOnTable(taskValue);
                 $('#input-tasks-id').val('');
             }
