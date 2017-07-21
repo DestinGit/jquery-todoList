@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
+
+</head>
+<body>
+<script src="bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+<script>
+    function PersonFactory(firstName) {
+        var sayHello = function(){
+            console.log('Hello ' + firstName);
+        };
+//Retourne un objet littéral
+        return {
+            greet: sayHello,
+            setFirstName: function (value) {
+                firstName = value;
+            }
+        };
+    }
+
+    var t = new PersonFactory('alice');
+    t.greet();
+    t.setFirstName('toto');
+    t.greet();
+</script>
+</body>
+</html>

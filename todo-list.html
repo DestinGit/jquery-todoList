@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>SPA Home</title>
+
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css">
+
+</head>
+<body class="container-fluid">
+
+<div class="row">
+
+    <div class="col-md-6 col-md-offset-3">
+
+        <h1>Todo list</h1>
+
+        <form class="form-inline" id="addForm">
+            <div class="form-group">
+
+                <input type="text" name="task" id="task"
+                       class="form-control" required
+                       placeholder="Votre tâche ici"
+                >
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </div>
+        </form>
+
+        <form class="form-inline" id="filterForm">
+            <div class="form-group">
+                <fieldset>
+                    <legend>Filtrage</legend>
+                    <input type="radio" name="filter" value="done" id="filterDone">
+                    <label for="filterDone">Terminé</label>
+                    <input type="radio" name="filter" value="notDone" id="filterNotDone">
+                    <label for="filterNotDone">Encours</label>
+                    <input type="radio" name="filter" value="all" id="filterAll">
+                    <label for="filterAll">Toutes les tâches</label>
+                </fieldset>
+            </div>
+        </form>
+
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Tâche</th>
+                <th>Statut</th>
+            </tr>
+            </thead>
+
+            <tbody id="taskList">
+            <tr id="todoLineTemplate" class="hidden">
+                <td></td>
+                <td>
+                    <input type="checkbox">
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script>
+    function Todo(task, done) {
+        this.task = task;
+        this.done = done;
+    }
+
+    var todoModel = function () {
+        var todos = [];
+
+        //Ajouter une tâche
+        function addTodo(task) {
+            todos.push(new Todo(task, false));
+        }
+
+        //Mettre à jour une tâche
+        function updateTodo(done, index) {
+            todos[index].done = done;
+        }
+
+        //Lister toutes les tâches
+        function getAllTodos() {
+            return todos;
+        }
+
+        //filtrer les tâches
+        function getFilteredTodos(done) {
+            return todos.filter(function (item) {
+                return item.done == done;
+            });
+        }
+
+        //Supprimer une tâche
+        function deleteTodo(index) {
+            todos.splice(index, 1);
+            return todos;
+        }
+
+        return {
+            add: addTodo,
+            findAll: getAllTodos,
+            findByDone: getFilteredTodos,
+            update: updateTodo,
+            delete: deleteTodo
+        }
+    };
+
+    var model = todoModel();
+
+    model.add("Sortir le lait");
+    model.add("Acheter du chat");
+    model.add("Sauver le monde");
+    model.add("Apprendre Javascript");
+
+    model.update(true, 1);
+
+    console.log(model.findByDone(true));
+
+    //Cibles globales pour toute l'application
+
+    var $template = $("#todoLineTemplate").clone();
+
+    //Affichage des todos
+    function displayTodos(data) {
+
+        console.log(data);
+
+        var $target = $("#taskList");
+        var $clone = $target.clone();
+        $clone.empty();
+
+        data.forEach(function (item, index) {
+            //Clonage du modèle
+            var $line = $template.clone();
+            $line.removeClass("hidden");
+            $line.removeAttr("id");
+            //définition de la tâche
+            $line.find("td").eq(0).text(item.task);
+            //Définition du statut
+            var $input = $line.find("input[type='checkbox']").first();
+            $input.data("index", index);
+            if (item.done === true) {
+                $input.attr("checked", "checked");
+            }
+
+            //Ajout de la ligne au clone
+            $clone.append($line);
+        });
+
+        //Remplacement de la cible par clone
+        $target.replaceWith($clone);
+    }
+
+
+    //Ajout d'un tâche avec affichage dans la table
+    function addTodo(e) {
+        e.preventDefault();
+
+        var $task = $("#task")
+        var task = $task.val();
+        model.add(task);
+
+        displayTodos(model.findAll());
+
+        $task.val("");
+    }
+
+    //Mise à jour d'une tâche
+    function updateTask() {
+        var index = $(this).data("index");
+        var done = $(this).is(":checked");
+        model.update(done, index);
+
+        console.log(model.findAll());
+    }
+
+    function filterTask(){
+        var action = $(this).val();
+
+        var data = {
+            done: model.findByDone(true),
+            notDone: model.findByDone(false),
+            all: model.findAll()
+        };
+
+        displayTodos(data[action]);
+    }
+
+    $(document).ready(function () {
+        displayTodos(model.findAll());
+
+        $("#addForm").submit(addTodo);
+
+        $("#taskList").delegate("input", "change", updateTask);
+
+        $("input[name='filter']").change(filterTask);
+
+    });
+
+</script>
+</body>
+</html>

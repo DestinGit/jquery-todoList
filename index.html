@@ -163,9 +163,28 @@
             var $prev = $tr.prev();
             var $next = $tr.next();
 
+            var thisObj=$('#tasksList').find('.checkbox');
+
             if (direction === 1) {
+                var prevObj = $prev.find('.checkbox');
+
+                console.log($prev);
+                console.log($prev.find('label').text());
+                console.log($tr);
+                console.log($tr.find('label').text());
+                updateItem.call(thisObj);
+                updateItem.call(prevObj);
                 $tr.insertBefore($prev);
             } else {
+                var nextObj = $prev.find('.checkbox');
+
+                console.log($next);
+                console.log($next.find('label').text());
+                console.log($tr);
+                console.log($tr.find('label').text());
+                updateItem.call(thisObj);
+                updateItem.call(nextObj);
+
                 $tr.insertAfter($next);
             }
         });
