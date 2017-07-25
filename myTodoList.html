@@ -7,11 +7,40 @@
 
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="bower_components/datatables.net-dt/css/jquery.dataTables.min.css">
 </head>
 <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>ToDo List</h1>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-md-10 col-sm-10">
+                        <input type="text" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Valider</button>
+                </div>
+            </form>
+
+            <table id="table_tasks" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Tâches</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody_task"></tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
 
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+
 <script src="assets/js/todoListModelClass.js"></script>
 <script src="assets/js/todoList.js"></script>
 </body>

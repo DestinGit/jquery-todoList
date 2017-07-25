@@ -43,13 +43,21 @@ var TodoModels = function() {
         return todos;
     }
 
+    // View tasks filtered
+    function getTasksByDone(done) {
+        return todos.filter(function(item) {
+            return item.done === done;
+        });
+    }
+
     return {
         add: addTodo,
-        displayAll:getAllTodos,
+        findAll:getAllTodos,
+        findByDone: getTasksByDone,
         delete: deleteTodo,
         update: updateTodo
     };
 
 };
 
-// var mModel = TodoModels();
+var modelTasks = TodoModels();
