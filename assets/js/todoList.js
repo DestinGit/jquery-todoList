@@ -1,10 +1,14 @@
+/**
+ *
+ * @param data
+ */
 function displayTasks(data) {
     var $target = $('#tbody_task');
-    var $tbody = target.clone();
+    var $tbody = $target.clone();
 
     data.forEach(function (elmt) {
-        $line = ('#todoLineTemplate').clone();
-        $line.removeAttr('id');
+        var $line = $('#todoLineTemplate').clone();
+        $line.removeAttr('id').removeClass('hidden');
 
         $line.find('td').eq(0).text(elmt.task);
         if (elmt.done) {
@@ -15,7 +19,9 @@ function displayTasks(data) {
     });
 
     $target.replaceWith($tbody);
+    $('#table_tasks').dataTable();
 }
+
 
 $(document).ready(function () {
     modelTasks.add('dormir');
@@ -24,9 +30,6 @@ $(document).ready(function () {
     modelTasks.add('precher');
 
     var res = modelTasks.findAll();
-
-    console.log(res);
-    $('#table_tasks').dataTable();
 
     displayTasks(res);
 

@@ -10,14 +10,6 @@
     <link rel="stylesheet" href="bower_components/datatables.net-dt/css/jquery.dataTables.min.css">
 </head>
 <body>
-<div class="hidden">
-    <tr id="todoLineTemplate" class="">
-        <td></td>
-        <td>
-            <input type="checkbox">
-        </td>
-    </tr>
-</div>
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
@@ -38,7 +30,15 @@
                         <th>Statut</th>
                     </tr>
                 </thead>
-                <tbody id="tbody_task"></tbody>
+                <tbody id="tbody_task">
+                <tr id="todoLineTemplate" class="hidden">
+                    <td></td>
+                    <td>
+                        <input type="checkbox">
+                    </td>
+                </tr>
+
+                </tbody>
 
             </table>
         </div>
